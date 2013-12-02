@@ -1,0 +1,7 @@
+install gnuplot
+install gnuplot-x11
+set terminal x11
+boost.org -> sciagnac boosta
+gnuplot-iostream
+sudo apt-get install libboostl1.50-all
+
