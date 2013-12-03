@@ -21,9 +21,11 @@ MeasurmentsHandler::MeasurmentsHandler(mpu6050& sensor, const char* filename, in
 		convolutionFactors.push_back((double)1/filterStrength);
 	}
 
-	/*for(int i=0; i<100; ++i){
-		convolutionFactors.push_back(1.0-((double)i)*0.00020202);
-	}*/
+	/*convolutionFactors.push_back(0.08);
+	convolutionFactors.push_back(0.22);
+	convolutionFactors.push_back(0.4);
+	convolutionFactors.push_back(0.22);
+	convolutionFactors.push_back(0.08);*/
 
 	std::cout << "Initialization finished" << std::endl;
 
