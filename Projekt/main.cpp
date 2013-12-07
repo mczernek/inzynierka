@@ -33,7 +33,7 @@ int main(int argc, const char** argv)
     }
 
     if(argc>4){
-    	processParameters(argv[3]);
+    	processParameters(argv[4]);
     }
 
     mpu6050 sensor;

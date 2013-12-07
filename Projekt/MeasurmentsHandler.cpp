@@ -17,15 +17,17 @@ MeasurmentsHandler::MeasurmentsHandler(mpu6050& sensor, const char* filename, in
 	starttime = 0;
 	givenKeyWasPressed = false;
 
-	for(int i=0; i<filterStrength; i++){
-		convolutionFactors.push_back((double)1/filterStrength);
+	if(filterStrength != 0){
+		for(int i=0; i<filterStrength; i++){
+			convolutionFactors.push_back((double)1/filterStrength);
+		}
+	}else{
+		convolutionFactors.push_back(0.08);
+		convolutionFactors.push_back(0.22);
+		convolutionFactors.push_back(0.4);
+		convolutionFactors.push_back(0.22);
+		convolutionFactors.push_back(0.08);
 	}
-
-	/*convolutionFactors.push_back(0.08);
-	convolutionFactors.push_back(0.22);
-	convolutionFactors.push_back(0.4);
-	convolutionFactors.push_back(0.22);
-	convolutionFactors.push_back(0.08);*/
 
 	std::cout << "Initialization finished" << std::endl;
 
