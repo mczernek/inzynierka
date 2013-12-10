@@ -40,7 +40,11 @@ private:
 
 	int range;
 
-	std::ofstream of;
+	std::ofstream of1;
+	std::ofstream of2;
+	std::ofstream of3;
+	std::ofstream of4;
+	std::ofstream of5;
 	mpu6050& sensor;
 	long starttime;
 	const char* filename;
@@ -51,10 +55,31 @@ private:
 	void waitForKeyPressed(char keyPressed);
 	void loopStoring();
 
-	std::list<inz::Measurement> templist;
-	std::list<inz::Measurement> resultsForConvolution;
-	std::list<inz::Measurement> convolutionResults;
-	std::vector<double> convolutionFactors;
+	std::list<inz::Measurement> templist1;
+	std::list<inz::Measurement> resultsForConvolution1;
+	std::list<inz::Measurement> convolutionResults1;
+	std::vector<double> convolutionFactors1;
+
+	std::list<inz::Measurement> templist2;
+	std::list<inz::Measurement> resultsForConvolution2;
+	std::list<inz::Measurement> convolutionResults2;
+	std::vector<double> convolutionFactors2;
+
+
+	std::list<inz::Measurement> templist3;
+	std::list<inz::Measurement> resultsForConvolution3;
+	std::list<inz::Measurement> convolutionResults3;
+	std::vector<double> convolutionFactors3;
+
+	std::list<inz::Measurement> templist4;
+	std::list<inz::Measurement> resultsForConvolution4;
+	std::list<inz::Measurement> convolutionResults4;
+	std::vector<double> convolutionFactors4;
+
+	std::list<inz::Measurement> templist5;
+	std::list<inz::Measurement> resultsForConvolution5;
+	std::list<inz::Measurement> convolutionResults5;
+	std::vector<double> convolutionFactors5;
 
 	long lastResultTime;
 
