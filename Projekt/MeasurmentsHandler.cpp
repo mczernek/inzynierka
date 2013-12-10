@@ -260,7 +260,7 @@ void MeasurmentsHandler::addToResultsForConvolution() {
 	resultsForConvolution1.push_back(inz::Measurement(lastResultTime, x, y, z));
 	if (resultsForConvolution1.size() > convolutionFactors1.size()) {
 		resultsForConvolution1.pop_front();
-		addToConvultionResults();
+		//addToConvultionResults();
 	}
 
 
@@ -283,7 +283,7 @@ void MeasurmentsHandler::addToResultsForConvolution() {
 	resultsForConvolution2.push_back(inz::Measurement(lastResultTime, x, y, z));
 	if (resultsForConvolution2.size() > convolutionFactors2.size()) {
 		resultsForConvolution2.pop_front();
-		addToConvultionResults();
+		//addToConvultionResults();
 	}
 
 	//std::cout << "Adding to ResultsForConvolution" << std::endl;
@@ -305,7 +305,7 @@ void MeasurmentsHandler::addToResultsForConvolution() {
 	resultsForConvolution3.push_back(inz::Measurement(lastResultTime, x, y, z));
 	if (resultsForConvolution3.size() > convolutionFactors3.size()) {
 		resultsForConvolution3.pop_front();
-		addToConvultionResults();
+		//addToConvultionResults();
 	}
 
 	//std::cout << "Adding to ResultsForConvolution" << std::endl;
@@ -327,7 +327,7 @@ void MeasurmentsHandler::addToResultsForConvolution() {
 	resultsForConvolution4.push_back(inz::Measurement(lastResultTime, x, y, z));
 	if (resultsForConvolution4.size() > convolutionFactors4.size()) {
 		resultsForConvolution4.pop_front();
-		addToConvultionResults();
+		//addToConvultionResults();
 	}
 
 	//std::cout << "Adding to ResultsForConvolution" << std::endl;
