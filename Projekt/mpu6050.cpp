@@ -14,6 +14,7 @@ void mpu6050::initializeSensor(int range) {
 
 	resetDevice();
 	wakeUpDevice();
+	setFilter();
 	setRange(range);
 
 }
@@ -49,6 +50,23 @@ void mpu6050::wakeUpDevice() {
 	sensor.readReg(0x6b, h);
 	std::cout << "Device woken up, register 0x6b has value: " << (int) h
 			<< std::endl;
+}
+
+void mpu6050::setFilter(){
+
+	unsigned char h, toSet;
+
+	toSet = 0x03;
+
+	sensor.readReg(0x1a, h);
+
+	std::cout << (int) h << std::endl;
+	std::cout << (int) toSet << std::endl;
+	std::cout << (int) toSet << std::endl;
+	std::cout << (int) (231 & h) << std::endl;
+	std::cout << (int) ((h & 231) | toSet) << std::endl;
+
+	sensor.readReg(0x1c, h);
 }
 
 int mpu6050::normalizeRange(int new_range) {

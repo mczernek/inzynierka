@@ -52,6 +52,7 @@ public:
 
 	void resetDevice();
 	void wakeUpDevice();
+	void setFilter();
 
 	void setRange(int new_range);
 
