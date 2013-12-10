@@ -33,7 +33,7 @@
 class mpu6050{
 public:
 
-	mpu6050();
+	mpu6050(int range);
 
 	double getTemp();
 	double getAccelX();
@@ -46,19 +46,35 @@ public:
 	bool isDataInterrput();
 	bool isMotionInterrupt();
 
+	int getMultiplier(){
+		return rangeMultiplier;
+	}
+
+	void resetDevice();
+	void wakeUpDevice();
+
+	void setRange(int new_range);
+
 	void refreshInterrupt();
 
 	virtual ~mpu6050();
 
 private:
 
+	int range;
+	int rangeMultiplier;
+
 	i2c8Bit sensor;
 
 	unsigned char interruptReg;
 
-	void initializeSensor();
+	void initializeSensor(int range);
 	inline double processAccelRegister(int reg);
 	long readSignedSensor(unsigned char high_bit, unsigned char low_bit);
+	int normalizeRange(int new_range);
+
+	void initMultiplier();
+
 };
 
 #endif

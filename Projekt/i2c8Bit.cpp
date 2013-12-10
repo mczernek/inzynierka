@@ -13,7 +13,6 @@ i2c8Bit::i2c8Bit(void){
         this->i2cDescriptor = -1;
         cout << " Opening I2C Device" << endl;
         this->openI2C();
- 
 }
  
 /*******************************************************************
@@ -36,7 +35,6 @@ i2c8Bit::i2c8Bit(unsigned char dev_addr, std::string i2c_file_name){
  * *********************************************************************/
  
 i2c8Bit::~i2c8Bit(void){
-    this->writeReg(0x6b, 0x40);
         cout << " Closing I2C Device" << endl;
     this->closeI2C();
 }

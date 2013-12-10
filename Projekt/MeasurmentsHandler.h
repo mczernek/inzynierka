@@ -20,7 +20,7 @@ class MeasurmentsHandler {
 
 public:
 
-	MeasurmentsHandler(mpu6050& sensor, const char* filename = "plik", int filterStrength = 10);
+	MeasurmentsHandler(mpu6050& sensor, const char* filename = "plik", int filterStrength = 10, int range = 10);
 	virtual ~MeasurmentsHandler();
 
 	void measure(int timeInSecs = 2);
@@ -37,6 +37,8 @@ public:
 private:
 
 	const int period;
+
+	int range;
 
 	std::ofstream of;
 	mpu6050& sensor;
@@ -60,6 +62,8 @@ private:
 	void addToTempList(long currTime, double x, double y, double z);
 	void addToResultsForConvolution();
 	void addToConvultionResults();
+
+	std::string getRange();
 
 
 };

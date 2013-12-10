@@ -9,19 +9,22 @@
 #include "Measurement.h"
 #include <iostream>
 #include <thread>
+#include <sstream>
 
 using namespace std;
 
-MeasurmentsHandler::MeasurmentsHandler(mpu6050& sensor, const char* filename, int filterStrength) :
-		of(filename), sensor(sensor), filename(filename), period(10), lastResultTime(0) {
+MeasurmentsHandler::MeasurmentsHandler(mpu6050& sensor, const char* filename,
+		int filterStrength, int range) :
+		of(filename), sensor(sensor), filename(filename), period(10), lastResultTime(
+				0), range(range) {
 	starttime = 0;
 	givenKeyWasPressed = false;
 
-	if(filterStrength != 0){
-		for(int i=0; i<filterStrength; i++){
-			convolutionFactors.push_back((double)1/filterStrength);
+	if (filterStrength != 0) {
+		for (int i = 0; i < filterStrength; i++) {
+			convolutionFactors.push_back((double) 1 / filterStrength);
 		}
-	}else{
+	} else {
 		convolutionFactors.push_back(0.08);
 		convolutionFactors.push_back(0.22);
 		convolutionFactors.push_back(0.4);
@@ -79,9 +82,10 @@ void MeasurmentsHandler::addResults(long currTime) {
 	}
 }
 
-void MeasurmentsHandler::storeValuesToFile(){
+void MeasurmentsHandler::storeValuesToFile() {
 	std::cout << convolutionResults.size() << std::endl;
-	for(std::list<inz::Measurement>::iterator it = convolutionResults.begin(); it != convolutionResults.end(); it++){
+	for (std::list<inz::Measurement>::iterator it = convolutionResults.begin();
+			it != convolutionResults.end(); it++) {
 		of << it->toPrint();
 	}
 }
@@ -89,8 +93,8 @@ void MeasurmentsHandler::storeValuesToFile(){
 void MeasurmentsHandler::plotResultsOnOneChart() {
 	FILE* gnuplotPipe = openGnuplot();
 
-	fprintf(gnuplotPipe, "plot [] [-2:2] \"%s\" using 1:2 title \"X\",",
-			filename);
+	fprintf(gnuplotPipe, "plot [] %s \"%s\" using 1:2 title \"X\",",
+			getRange().c_str(), filename);
 	fprintf(gnuplotPipe, "\"%s\" using 1:3 title \"Y\",", filename);
 	fprintf(gnuplotPipe, "\"%s\" using 1:4 title \"Z\"\n", filename);
 
@@ -100,16 +104,22 @@ void MeasurmentsHandler::plotResultsOnOneChart() {
 void MeasurmentsHandler::plotResultsInSeparateCharts() {
 	FILE* gnuplotPipe = openGnuplot();
 
-	fprintf(gnuplotPipe, "plot [] [-2:2] \"%s\" using 1:2 title \"X\"\n",
-			filename);
+	fprintf(gnuplotPipe, "plot [] %s \"%s\" using 1:2 title \"X\"\n",
+			getRange().c_str(), filename);
 	fprintf(gnuplotPipe, "set term x11 2\n");
-	fprintf(gnuplotPipe, "plot [] [-2:2] \"%s\" using 1:3 title \"Y\"\n",
-			filename);
+	fprintf(gnuplotPipe, "plot %s [-2:2] \"%s\" using 1:3 title \"Y\"\n",
+			getRange().c_str(), filename);
 	fprintf(gnuplotPipe, "set term x11 3\n");
-	fprintf(gnuplotPipe, "plot [] [-2:2] \"%s\" using 1:4 title \"Z\"\n",
-			filename);
+	fprintf(gnuplotPipe, "plot [] %s \"%s\" using 1:4 title \"Z\"\n",
+			getRange().c_str(), filename);
 
 	fprintf(gnuplotPipe, "q\n");
+}
+
+std::string MeasurmentsHandler::getRange(){
+	std::stringstream ss;
+	ss << "[-" << sensor.getMultiplier() * 2 << ":" << sensor.getMultiplier()*2 << "]";
+	return ss.str();
 }
 
 void MeasurmentsHandler::getCurrentTime(timeval& toSet) {
@@ -130,53 +140,59 @@ FILE* MeasurmentsHandler::openGnuplot() {
 	return result;
 }
 
-void MeasurmentsHandler::storeResult(long currTime){
+void MeasurmentsHandler::storeResult(long currTime) {
 	double x = sensor.getAccelX();
 	double y = sensor.getAccelY();
 	double z = sensor.getAccelZ();
 	addToTempList(currTime, x, y, z);
 }
 
-void MeasurmentsHandler::addToTempList(long currTime, double x, double y, double z){
+void MeasurmentsHandler::addToTempList(long currTime, double x, double y,
+		double z) {
 	//std::cout << "Adding to tempList" << std::endl;
 	//std::cout << "addToTempList" << std::endl;
 	//std::cout << currTime << ": " << x << std::endl;
 	templist.push_back(inz::Measurement(currTime, x, y, z));
-	if(templist.size() > 2)
+	if (templist.size() > 2)
 		templist.pop_front();
-	if(currTime >= lastResultTime + period){
+	if (currTime >= lastResultTime + period) {
 		lastResultTime += period;
 		addToResultsForConvolution();
 	}
 }
 
-void MeasurmentsHandler::addToResultsForConvolution(){
+void MeasurmentsHandler::addToResultsForConvolution() {
 	//std::cout << "Adding to ResultsForConvolution" << std::endl;
 	std::list<inz::Measurement>::iterator it_begin = templist.begin();
 	std::list<inz::Measurement>::iterator it_end = templist.end();
 	int factor_end = lastResultTime - it_begin->time;
 	int factor_begin = it_end->time - lastResultTime;
 	int delta = it_end->time - it_begin->time;
-	double x = ((double)factor_begin * it_begin->accelX + (double)factor_end * it_end->accelX) / delta;
-	double y = ((double)factor_begin * it_begin->accelY + (double)factor_end * it_end->accelY) / delta;
-	double z = ((double)factor_begin * it_begin->accelZ + (double)factor_end * it_end->accelZ) / delta;
+	double x = ((double) factor_begin * it_begin->accelX
+			+ (double) factor_end * it_end->accelX) / delta;
+	double y = ((double) factor_begin * it_begin->accelY
+			+ (double) factor_end * it_end->accelY) / delta;
+	double z = ((double) factor_begin * it_begin->accelZ
+			+ (double) factor_end * it_end->accelZ) / delta;
 	//std::cout << "addToResultsForConvolution" << std::endl;
 	//std::cout << it_begin->time << ": " << it_begin->accelX << std::endl;
 	//std::cout << it_end->time << ": " << it_end->accelX << std::endl;
 	//std::cout << lastResultTime << ": " << x << std::endl;
 	resultsForConvolution.push_back(inz::Measurement(lastResultTime, x, y, z));
-	if(resultsForConvolution.size() > convolutionFactors.size()){
+	if (resultsForConvolution.size() > convolutionFactors.size()) {
 		resultsForConvolution.pop_front();
 		addToConvultionResults();
 	}
 }
 
-void MeasurmentsHandler::addToConvultionResults(){
+void MeasurmentsHandler::addToConvultionResults() {
 	//std::cout << "Adding to Convolution results" << std::endl;
 	double x, y, z;
 	std::list<inz::Measurement>::iterator listIt;
 	std::vector<double>::iterator factorIt;
-	for(listIt = resultsForConvolution.begin(), factorIt = convolutionFactors.begin(); listIt != resultsForConvolution.end(); listIt++, factorIt++){
+	for (listIt = resultsForConvolution.begin(), factorIt =
+			convolutionFactors.begin(); listIt != resultsForConvolution.end();
+			listIt++, factorIt++) {
 		x += listIt->accelX * (*factorIt);
 		y += listIt->accelY * (*factorIt);
 		z += listIt->accelZ * (*factorIt);
